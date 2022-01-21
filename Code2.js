@@ -74,12 +74,7 @@ function Common_CheckForPlugIn() {
     }
 }
 
-function signFileInChunks(id) {
-    window.startTime = performance.now();
-    console.log('start measure');
-    document.getElementById("crypro_progress").innerHTML = "Please wait, operation in progress...";
-    // return doSign(id);
-    // doSign(id);
+function signFileInChunks() {
     run();
 }
 
@@ -129,7 +124,7 @@ function run() {
             return;
         }
         var certificate = global_selectbox_container[selectedCertID];
-        var sCertName = "Test Certificate"
+        // var sCertName = "Test Certificate"
 
 
         var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
@@ -163,19 +158,20 @@ function run() {
             else {
                 cadesplugin.async_spawn(function* (args) {
                     progress.value = 100;
-                    var oStore = yield cadesplugin.CreateObjectAsync("CAdESCOM.Store");
-                    yield oStore.Open(CAPICOM_CURRENT_USER_STORE, CAPICOM_MY_STORE,
-                        CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
+                    // var oStore = yield cadesplugin.CreateObjectAsync("CAdESCOM.Store");
+                    // yield oStore.Open(CAPICOM_CURRENT_USER_STORE, CAPICOM_MY_STORE,
+                    //     CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
 
-                    var oStoreCerts = yield oStore.Certificates;
-                    var oCertificates = yield oStoreCerts.Find(
-                        CAPICOM_CERTIFICATE_FIND_SUBJECT_NAME, sCertName);
-                    var certsCount = yield oCertificates.Count;
-                    if (certsCount === 0) {
-                        alert("Certificate not found: " + sCertName);
-                        return;
-                    }
-                    var oCertificate = yield oCertificates.Item(1);
+                    // var oStoreCerts = yield oStore.Certificates;
+                    // var oCertificates = yield oStoreCerts.Find(
+                    //     CAPICOM_CERTIFICATE_FIND_SUBJECT_NAME, sCertName);
+                    // var certsCount = yield oCertificates.Count;
+                    // if (certsCount === 0) {
+                    //     alert("Certificate not found: " + sCertName);
+                    //     return;
+                    // }
+                    // var oCertificate = yield oCertificates.Item(1);
+                    var oCertificate = certificate;
                     console.error("oCertificate", oCertificate);
                     var oSigner = yield cadesplugin.CreateObjectAsync("CAdESCOM.CPSigner");
                     yield oSigner.propset_Certificate(oCertificate);
@@ -190,7 +186,7 @@ function run() {
                         alert("Failed to create signature. Error: " + cadesplugin.getLastError(err));
                         return;
                     }
-                    yield oStore.Close();
+                    // yield oStore.Close();
 
                     // Выводим отделенную подпись в BASE64 на страницу
                     // Такая подпись должна проверяться в КриптоАРМ и cryptcp.exe

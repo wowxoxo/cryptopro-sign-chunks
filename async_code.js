@@ -111,7 +111,7 @@ function CheckForPlugIn_Async() {
 
     function GetLatestVersion_Async(CurrentPluginVersion) {
         var xmlhttp = getXmlHttp();
-        xmlhttp.open("GET", "/cryptopro-plugin/cades/latest_2_0.txt", true);
+        xmlhttp.open("GET", "/cades/latest_2_0.txt", true);
         xmlhttp.onreadystatechange = function() {
         var PluginBaseVersion;
             if (xmlhttp.readyState == 4) {

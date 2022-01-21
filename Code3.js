@@ -74,12 +74,7 @@ function Common_CheckForPlugIn() {
     }
 }
 
-function signFileInChunks(id) {
-    window.startTime = performance.now();
-    console.log('start measure');
-    document.getElementById("crypro_progress").innerHTML = "Please wait, operation in progress...";
-    // return doSign(id);
-    // doSign(id);
+function signFileInChunks2() {
     run();
 }
 
@@ -90,39 +85,20 @@ var CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED = 2;
 var CAPICOM_CERTIFICATE_FIND_SUBJECT_NAME = 1;
 var CADESCOM_BASE64_TO_BINARY = 1;
 
-function doCheck() {
-    // Проверяем, работает ли File API
-    if (window.FileReader) {
-        // Браузер поддерживает File API.
-    } else {
-        alert("The File APIs are not fully supported in this browser.");
-    }
-    var fileReader = new FileReader();
-    if (typeof (fileReader.readAsDataURL) !== "function") {
-        alert("Method readAsDataURL() is not supported in FileReader.");
-        return;
-    }
-}
 
-var CADESCOM_CADES_BES = 1;
-var CAPICOM_CURRENT_USER_STORE = 2;
-var CAPICOM_MY_STORE = "My";
-var CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED = 2;
-var CAPICOM_CERTIFICATE_FIND_SUBJECT_NAME = 1;
-var CADESCOM_BASE64_TO_BINARY = 1;
+function signCreate(certificate, oHashedData) {
+    // var oStore = cadesplugin.CreateObject("CAdESCOM.Store");
+    // oStore.Open(CAPICOM_CURRENT_USER_STORE, CAPICOM_MY_STORE,
+    //     CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
 
-function signCreate(certSubjectName, oHashedData) {
-    var oStore = cadesplugin.CreateObject("CAdESCOM.Store");
-    oStore.Open(CAPICOM_CURRENT_USER_STORE, CAPICOM_MY_STORE,
-        CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
-
-    var oCertificates = oStore.Certificates.Find(
-        CAPICOM_CERTIFICATE_FIND_SUBJECT_NAME, certSubjectName);
-    if (oCertificates.Count == 0) {
-        alert("Certificate not found: " + certSubjectName);
-        return;
-    }
-    var oCertificate = oCertificates.Item(1);
+    // var oCertificates = oStore.Certificates.Find(
+    //     CAPICOM_CERTIFICATE_FIND_SUBJECT_NAME, certSubjectName);
+    // if (oCertificates.Count == 0) {
+    //     alert("Certificate not found: " + certSubjectName);
+    //     return;
+    // }
+    // var oCertificate = oCertificates.Item(1);
+    var oCertificate = certificate;
     var oSigner = cadesplugin.CreateObject("CAdESCOM.CPSigner");
     oSigner.Certificate = oCertificate;
     oSigner.CheckCertificate = true;
@@ -137,7 +113,7 @@ function signCreate(certSubjectName, oHashedData) {
         return;
     }
 
-    oStore.Close();
+    // oStore.Close();
 
     return sSignedMessage;
 }
@@ -154,7 +130,7 @@ function Verify(sSignedMessage, oHashedData) {
     return true;
 }
 
-function signFile(file, certSubjectName) {
+function signFile(file, certificate) {
     var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
     var chunkSize = 3 * 1024 * 1024; // 3MB
     var chunks = Math.ceil(file.size / chunkSize);
@@ -185,7 +161,7 @@ function signFile(file, certSubjectName) {
         }
         else {
             progress.value = 100;
-            var signedMessage = signCreate(certSubjectName, oHashedData);
+            var signedMessage = signCreate(certificate, oHashedData);
             // Выводим отделенную подпись в BASE64 на страницу
             // Такая подпись должна проверяться в КриптоАРМ и cryptcp.exe
             // document.getElementById("signature").innerHTML = signedMessage;
@@ -241,12 +217,22 @@ function run() {
 
     var oFile = document.getElementById("openFileButton").files[0];
 
-    var oCertName = document.getElementById("CertName");
+    // var oCertName = document.getElementById("CertName");
     // var sCertName = oCertName.value; // Здесь следует заполнить SubjectName сертификата
-    var sCertName = "Test Certificate";
-    if ("" == sCertName) {
-        alert("Введите имя сертификата (CN).");
+    // var sCertName = "Test Certificate";
+    // if ("" == sCertName) {
+    //     alert("Введите имя сертификата (CN).");
+    //     return;
+    // }
+
+    var e = document.getElementById('CertListBox');
+    var selectedCertID = e.selectedIndex;
+    // var selectedCert = e.options[selectedCertID];
+    if (selectedCertID == -1) {
+        alert("Select certificate");
         return;
     }
-    signFile(oFile, sCertName);
+    var certificate = global_selectbox_container[selectedCertID];
+
+    signFile(oFile, certificate);
 }
