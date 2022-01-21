@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto pro web plugin tests</title>
+    <link href="demopage.css" rel="stylesheet" type="text/css">
+    <script language="javascript" src="es6-promise.min.js"></script>
+    <script language="javascript" src="ie_eventlistner_polyfill.js"></script>
+    <script language="javascript">
+        function setExtensionLoadingInfo() {
+            if (document.getElementById('ExtensionEnabledImg'))
+                document.getElementById('ExtensionEnabledImg').setAttribute("src", "Img/green_dot.png");
+            if (document.getElementById('ExtensionEnabledTxt'))
+                document.getElementById('ExtensionEnabledTxt').innerHTML = "Расширение загружено";
+            if (document.getElementById('PluginEnabledImg'))
+                document.getElementById('PluginEnabledImg').setAttribute("src", "Img/red_dot.png");
+            if (document.getElementById('PlugInEnabledTxt'))
+                document.getElementById('PlugInEnabledTxt').innerHTML = "Плагин не загружен";
+            window.cadesplugin_extension_loaded = true;
+        }
+        function extensionLoadedCallback() {
+            window.onload = function (e) {
+                setExtensionLoadingInfo();
+            }
+            setExtensionLoadingInfo();
+        }
+        window.cadesplugin_extension_loaded_callback = extensionLoadedCallback;
+    </script>
+    <script language="javascript" src="cadesplugin_api.js"></script>
+    <script type="text/javascript" src="chrome-extension://iifchhfnnmpdbibifmljnfjhpififfog/nmcades_plugin_api.js"></script>
+    <!-- <script language="javascript" src="Code.js"></script> -->
+    <script language="javascript" src="Code2.js"></script>
+    <!-- <script language="javascript" src="Code3.js"></script> -->
+    <!-- <script type="text/javascript" src="async_code.js"></script> -->
+</head>
+<body>
+    <div id="min-width">
+        <div id="container">
+            <table>
+                <tbody><tr>
+                    <td>
+                        <div id="header">
+                            <!-- <a href="/" title="Главная">
+                            <img src="Img/key.png" alt="Главная" class="logo"></a> -->
+                            <h1>Crypto pro web plugin tests for CAdES-BE signature</h1>
+                            <div id="promo"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="mainContent">
+                            <div id="left-col">
+                                <div id="info">
+                                    <div id="info_msg" style="text-align:center;">
+                                        <img id="info_img" src="Img/application_information.png" alt="">
+                                        <span id="ExtensionEnabledTxt">Расширение загружено</span>
+                                        <img src="Img/green_dot.png" width="10" height="10" alt="Расширение не загружено" id="ExtensionEnabledImg">
+                                        <br>
+                                        <span id="PlugInEnabledTxt">Плагин загружен</span>
+                                        <img src="Img/green_dot.png" width="10" height="10" alt="Плагин не загружен" id="PluginEnabledImg">
+                                        <br>
+                                        <span id="CspEnabledTxt">Криптопровайдер загружен</span>
+                                        <img src="Img/green_dot.png" width="10" height="10" alt="КриптоПро CSP не загружен" id="CspEnabledImg">
+                                        <br>
+                                        <span id="PlugInVersionTxt" lang="ru">Версия плагина: 2.0.14459</span>
+                                        <span id="CSPVersionTxt" lang="ru">Версия криптопровайдера: 5.0.12330</span>
+                                        <br>
+                                        <span id="CSPNameTxt" lang="ru">Криптопровайдер: Crypto-Pro GOST R 34.10-2012 Cryptographic Service Provider</span>
+                                    </div>
+                                    <div id="boxdiv" style="display:none">
+                                        <span id="errorarea">
+                                            У вас отсутствуют личные сертификаты. Вы можете 
+                                            <a href="#" onclick="Common_RetrieveCertificate();" style="color:#0837ff"> получить</a> 
+                                            сертификат от тестового УЦ, предварительно установив 
+                                            <a href="https://testca.cryptopro.ru/certsrv/certnew.cer?ReqID=CACert&amp;Renewal=1&amp;Enc=bin" style="color:#0837ff">корневой сертификат тестового УЦ</a> 
+                                            в доверенные.
+                                        </span>
+                                    </div>
+                                </div>
+                                <p id="info_msg" name="CertificateTitle">Выберите сертификат:</p>
+                                <div id="item_border" name="CertListBoxToHide" style="box-shadow: 0px 0px 0px;">
+                                    <select size="8" name="CertListBox" id="CertListBox" style="width:100%;resize:none;border:0;">
+                                    </select>             
+                                </div>
+
+                                <div id="cert_info" style="">
+                                    <!-- <h2>Информация о сертификате</h2>
+                                        <p class="info_field" id="subject">Владелец: <b>CN=Test Certificate<b></b></b></p>
+                                        <p class="info_field" id="issuer">Издатель: <b>CN=CRYPTO-PRO Test Center 2<b></b></b></p>
+                                        <p class="info_field" id="from">Выдан: <b>17.01.2022 13:36:11 UTC<b></b></b></p>
+                                        <p class="info_field" id="till">Действителен до: <b>17.04.2022 13:46:11 UTC<b></b></b></p>
+                                        <p class="info_field" id="provname">Криптопровайдер: <b>Crypto-Pro GOST R 34.10-2012 Cryptographic Service Provider<b></b></b></p>
+                                        <p class="info_field" id="privateKeyLink">Ссылка на закрытый ключ: <b>REGISTRY\\b346c31e4-9006-9f4a-f59f-e96e79dac56<b></b></b></p>
+                                        <p class="info_field" id="algorithm">Алгоритм ключа: <b>ГОСТ Р 34.10-2012 256 бит<b></b></b></p>
+                                        <p class="info_field" id="status">Статус: <b> Действителен<b></b></b></p>
+                                        <p class="info_field" id="location">Установлен в хранилище: <b>Да</b></p> -->
+                                </div>
+
+                                <h2>Scenario 1</h2>
+                                <h3>Signing big files</h3>
+                                <p id="info_msg" name="DataToSign" style="display: block;">Загрузить файл:</p>
+                                <div id="item_border" name="DataToSignItemBorder" style="display: block;">
+                                    <input id="openFileButton" type="file" name="openFileButton" onchange="openFile(event)" style="width: 100%; box-shadow: 0px 0px 0px;">
+                                    <script>
+                                        var openFile = function (event) {
+                                            fileContent = undefined;
+                                            var input = event.target;
+                                            var reader = new FileReader();
+                                            reader.readAsDataURL(input.files[0]);
+                                            reader.onload = function () {
+                                                var header = ";base64,";
+                                                var fileData = reader.result;
+                                                fileContent = fileData.substr(fileData.indexOf(header) + header.length);
+                                            };
+                                        };
+                                    </script>
+                                </div>
+                                <p></p>
+                                <div>
+                                    <input id="SignBtn" type="button" value="Подписать файл" name="SignData" onclick="
+                                                    if ('' == openFileButton.value)
+                                                        { alert('Файл не выбран.'); return; }
+                                                    else
+                                                        if ('' == fileContent || undefined == fileContent)
+                                                        { alert('Выбран пустой файл'); return; }
+                                                    else
+                                                        Common_SignCadesBES_File('CertListBox')" style="display: block; box-shadow: rgb(253, 255, 71) 0px 0px 20px;">
+                                    <br />
+                                    <progress id="progressbar" max="100" value="0"> 0% </progress>
+                                    <input id="SignBtn5" type="button" value="Подписать файл частями" name="SignBtn5" onclick="signFileInChunks('CertListBox')">
+                                    <br />
+                                    <hr />
+                                    <h2>Scenario 2</h2>
+                                    <h3>Signing 3Kb files</h3>
+                                    <input id="SignBtn2" type="button" value="Подписать 1000 файлов" name="SignData2" onclick="sign_files('CertListBox', 1000)">
+
+                                    <input id="SignBtn3" type="button" value="Подписать 3000 файлов" name="SignData2" onclick="sign_files('CertListBox', 3000)">
+
+                                    <input id="SignBtn4" type="button" value="Подписать 5000 файлов" name="SignData2" onclick="sign_files('CertListBox', 5000)">
+                                    <hr />
+                                    <div id="crypro_progress">...</div>
+                                </div>
+
+
+                                <p id="info_msg" name="SignatureTitle" style="display: none;">Подпись:</p>
+                                <div id="item_border" name="SignatureTitleItemBorder" style="display: none;">
+                                    <textarea id="SignatureTxtBox" style="font-size:9pt;height:600px;width:100%;resize:none;border:0;display: none;"></textarea>
+                                    <script language="javascript">
+                                        var txtDataToSign = "Hello World";
+                                        document.getElementById("SignatureTxtBox").innerHTML = "";
+                                        var canPromise = !!window.Promise;
+                                        if (isEdge()) {
+                                            ShowEdgeNotSupported();
+                                        } else {
+                                            if (canPromise) {
+                                                cadesplugin.then(function () {
+                                                    Common_CheckForPlugIn();
+                                                },
+                                                    function (error) {
+                                                        if (window.cadesplugin_extension_loaded) {
+                                                            document.getElementById('PluginEnabledImg').setAttribute("src", "Img/red_dot.png");
+                                                            document.getElementById('PlugInEnabledTxt').innerHTML = error;
+                                                        }
+                                                    }
+                                                );
+                                            } else {
+                                                window.addEventListener("message", function (event) {
+                                                    if (event.data == "cadesplugin_loaded") {
+                                                        CheckForPlugIn_NPAPI();
+                                                    } else if (event.data == "cadesplugin_load_error") {
+                                                        if (window.cadesplugin_extension_loaded) {
+                                                            document.getElementById('PluginEnabledImg').setAttribute("src", "Img/red_dot.png");
+                                                            document.getElementById('PlugInEnabledTxt').innerHTML = "Плагин не загружен";
+                                                        }
+                                                    }
+                                                },
+                                                    false);
+                                                window.postMessage("cadesplugin_echo_request", "*");
+                                            }
+                                        }
+                                    </script>
+                                </div>
+                                <p></p>
+                                <p id="info_msg" name="TimeTitle" style="display: none;">Время выполнения: </p>
+                            </div>
+                            <div id="right-col">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody></table>
+        </div>
+        <div id="footer">
+            © ООО "Тест", 2001-<script>document.write(new Date().getFullYear())</script>
+        </div>
+    </div>
+    <script language="javascript" src="highlight.js"></script>
+    <script language="javascript">
+        if (isIE()) {
+            if (document.getElementById('ExtensionEnabledImg'))
+                document.getElementById('ExtensionEnabledImg').setAttribute("src", "Img/green_dot.png");
+            if (document.getElementById('ExtensionEnabledTxt'))
+                document.getElementById('ExtensionEnabledTxt').innerHTML = "Расширение не требуется";
+            if (document.getElementById('PluginEnabledImg'))
+                document.getElementById('PluginEnabledImg').setAttribute("src", "Img/red_dot.png");
+            if (document.getElementById('PlugInEnabledTxt'))
+                document.getElementById('PlugInEnabledTxt').innerHTML = "Плагин не загружен";
+            window.cadesplugin_extension_loaded = true;
+        }
+    </script>
+</body>
+</html>
