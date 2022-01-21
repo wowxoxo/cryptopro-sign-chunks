@@ -37,8 +37,12 @@ function step_1() {
         if (document.getElementById('CertListBox').selectedIndex !== -1)
             step_2();
     }, 500);
-    document.getElementById('SignBtn').addEventListener("click", step_3);
-    document.getElementById('SignBtn2').addEventListener("click", step_3);
+    if (document.getElementById('SignBtn')) {
+        document.getElementById('SignBtn').addEventListener("click", step_3);
+    }
+    if (document.getElementById('SignBtn2')) {
+        document.getElementById('SignBtn2').addEventListener("click", step_3);
+    }
     for (var i = 0; i < elems_before_signing.length; i++) {
         hide_elem(elems_before_signing[i]);
     }
